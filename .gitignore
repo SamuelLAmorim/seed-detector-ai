@@ -1,0 +1,25 @@
+# Segurança e Ambiente
+.env
+.env.local
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# Banco de Dados e Uploads (Não queremos subir fotos de teste)
+*.db
+storage/
+backend/storage/
+
+# Node/React
+node_modules/
+dist/
+build/
+.eslintcache
+
+# Docker logs
+*.log

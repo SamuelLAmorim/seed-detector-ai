@@ -1,0 +1,240 @@
+:root {
+  --st-bg: #f8f9fb;
+  --st-sidebar-bg: #ffffff;
+  --st-primary: #ff4b4b;
+  --st-primary-hover: #ff3333;
+  --st-secondary: #0e1117;
+  --st-text: #31333f;
+  --st-text-muted: #5c5e66;
+  --st-border: #e6e9ef;
+  --st-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+body { 
+  margin: 0; 
+  font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+  background: var(--st-bg); 
+  color: var(--st-text); 
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- ANIMAÇÃO SUAVE --- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.st-main { 
+  animation: fadeIn 0.4s ease-out; /* Aplica animação ao carregar o conteúdo */
+  margin-left: 280px; 
+  padding: 3rem; 
+  width: calc(100% - 280px); 
+  box-sizing: border-box;
+}
+
+/* --- LOGIN --- */
+.st-login-wrapper {
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  width: 100vw; 
+  height: 100vh; 
+  background: #0e1117; /* Fundo escuro igual ao seu original */
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  z-index: 1000;
+}
+
+.st-login-card {
+  background: white; 
+  padding: 3rem 2rem; 
+  border-radius: 1.5rem;
+  width: 100%; 
+  max-width: 400px; /* Largura ideal para não ficar esticado */
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  animation: fadeIn 0.5s ease;
+}
+
+.st-login-card h1 {
+  margin-bottom: 0.5rem;
+  color: #31333f;
+  font-size: 2rem;
+}
+
+.st-login-card p {
+  color: #5c5e66;
+  margin-bottom: 2rem;
+}
+
+.st-login-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espaçamento entre os campos */
+  width: 100%;
+}
+
+.st-login-card input {
+  width: 100%; 
+  padding: 14px;
+  border: 1.5px solid var(--st-border); 
+  border-radius: 10px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  
+  /* FORÇAR CORES PARA NÃO FICAR TRANSPARENTE */
+  background-color: #ffffff !important; 
+  color: #31333f !important; /* Cor cinza escuro/preto do Streamlit */
+  
+  transition: all 0.2s;
+}
+
+/* Garante que, ao clicar, o texto continue visível e a borda mude */
+.st-login-card input:focus {
+  outline: none;
+  border-color: var(--st-primary);
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* CORREÇÃO PARA O AUTOFILL DO CHROME (Aquele fundo amarelo/azul chato) */
+.st-login-card input:-webkit-autofill,
+.st-login-card input:-webkit-autofill:hover, 
+.st-login-card input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #31333f !important;
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.st-login-card .st-button-primary {
+  width: 100%; /* Botão "Entrar" ocupa a largura toda */
+  margin-top: 10px;
+  padding: 16px;
+  font-size: 1.1rem;
+}
+
+.st-toggle-link {
+  background: #1e1e1e; /* Estilo do botão preto da sua imagem */
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  width: 100%;
+  margin-top: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.st-toggle-link:hover {
+  opacity: 0.9;
+}
+
+/* --- LAYOUT SIDEBAR --- */
+.st-app { display: flex; min-height: 100vh; }
+
+.st-sidebar {
+  width: 280px; background: var(--st-sidebar-bg); border-right: 1px solid var(--st-border);
+  padding: 1.5rem; display: flex; flex-direction: column;
+  position: fixed; height: 100vh; box-sizing: border-box; z-index: 10;
+}
+
+/* --- MENU E BOTÕES --- */
+.st-menu { display: flex; flex-direction: column; gap: 8px; margin: 1rem 0; }
+
+.st-menu button {
+  background: transparent; border: none; padding: 12px 16px;
+  text-align: left; border-radius: 10px; cursor: pointer; 
+  font-weight: 500; color: var(--st-text-muted); transition: all 0.2s;
+}
+
+.st-menu button:hover { background: #f0f2f6; color: var(--st-text); }
+.st-menu button.active { background: #ffebeb; color: var(--st-primary); font-weight: 600; }
+
+/* FOOTER DA SIDEBAR (BOTÕES CERTOS) */
+.st-sidebar-footer {
+  margin-top: auto; 
+  display: flex; flex-direction: column; gap: 12px;
+  padding-top: 1.5rem; border-top: 1px solid var(--st-border);
+}
+
+.st-button-primary {
+  background: var(--st-primary); color: white; border: none;
+  padding: 14px; border-radius: 10px; font-weight: 600; cursor: pointer;
+}
+
+.st-button-csv {
+  background: #2e7d32; color: white; border: none;
+  padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer;
+}
+
+.st-button-logout {
+  background: transparent; color: #ff4b4b; border: 1px solid #ff4b4b;
+  padding: 10px; border-radius: 10px; font-weight: 600; cursor: pointer;
+}
+
+/* --- ESTATÍSTICAS E GRÁFICOS (INDENTAÇÃO E VISIBILIDADE) --- */
+.st-stats-view {
+  display: flex; flex-direction: column; gap: 2rem;
+}
+
+.st-chart-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); /* Melhora a indentação e responsividade */
+  gap: 2rem; 
+}
+
+.st-chart-card { 
+  background: white; 
+  padding: 2.5rem; /* Mais respiro para os dados */
+  border-radius: 1.2rem; 
+  box-shadow: var(--st-shadow); 
+  border: 1px solid var(--st-border);
+  display: flex; flex-direction: column; align-items: center;
+}
+
+.st-chart-card h3 {
+  margin-top: 0; margin-bottom: 1.5rem;
+  color: var(--st-text-muted); font-size: 1.1rem;
+}
+
+/* Garante que o gráfico seja visível e não escape do card */
+.st-chart-card > div {
+  width: 100% !important;
+  height: 300px !important;
+}
+
+/* --- GRID DE RESULTADOS (ANALISE) --- */
+.st-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+  gap: 1.5rem; 
+}
+
+.st-metric-card { 
+  background: white; border-radius: 15px; overflow: hidden; 
+  box-shadow: var(--st-shadow); border: 1px solid var(--st-border);
+}
+
+.st-img-preview { width: 100%; height: 200px; object-fit: cover; }
+.card-content { padding: 1.5rem; }
+
+.st-metrics { 
+  display: flex; justify-content: space-between; gap: 10px; margin-top: 1rem; 
+}
+
+.st-metric { 
+  text-align: center; background: #f8f9fb; padding: 10px 5px; 
+  border-radius: 8px; flex: 1; 
+}
+
+.st-metric strong { display: block; font-size: 1.1rem; color: var(--st-primary); }
+.st-metric span { font-size: 0.65rem; color: #888; text-transform: uppercase; font-weight: 700; }
+
+/* --- OUTROS --- */
+.st-sidebar-header { display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem; }
+.st-badge { background: #f0f2f6; color: #555; padding: 2px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
+.st-slider { width: 100%; accent-color: var(--st-primary); cursor: pointer; }
+.st-divider { border: 0; border-top: 1px solid var(--st-border); margin: 1rem 0; }
+.st-upload-preview { width: 100%; max-height: 150px; border-radius: 10px; object-fit: cover; border: 2px solid var(--st-border); }
