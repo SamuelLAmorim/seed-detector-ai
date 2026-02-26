@@ -29,7 +29,7 @@ function App() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
-
+  // --- BUSCAR HISTÓRICO ---
   useEffect(() => {
     const fetchHistory = async () => {
       if (token) {
@@ -38,7 +38,6 @@ function App() {
             headers: { 'Authorization': `Bearer ${token}` }
           });
           
-          // Mapeamos os dados do banco para o formato que os cards e gráficos esperam
           const historyData = res.data.map(item => ({
             id: item.id,
             name: `Análise #${item.id}`, 
@@ -46,7 +45,7 @@ function App() {
             quebradas: item.quebradas,
             predadas: item.predadas,
             total: item.total,
-            url: null // Como é histórico, a imagem fica no servidor, não no preview local
+            url: null // Histórico não traz URL de preview local
           }));
 
           setResults(historyData);
@@ -56,20 +55,17 @@ function App() {
       }
     };
     fetchHistory();
-  }, [token]); // Ele "vigia" o token: Ele busca o histórico.
-
+  }, [token]);
 
   // --- LÓGICA DE PREVIEW ---
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     setFiles(selectedFiles);
 
-    // Gera URLs temporárias para visualização prévia
     const urls = selectedFiles.map(file => URL.createObjectURL(file));
     setPreviewUrls(urls);
   };
 
-  // Limpa URLs da memória para evitar vazamento (memory leak)
   useEffect(() => {
     return () => previewUrls.forEach(url => URL.revokeObjectURL(url));
   }, [previewUrls]);
@@ -249,7 +245,13 @@ function App() {
             <div className="st-grid">
               {results.map((res, i) => (
                 <div key={i} className="st-metric-card">
-                  {res.url && <img src={res.url} className="st-img-preview" alt="amostra" />}
+                  {res.url ? (
+                    <img src={res.url} className="st-img-preview" alt="amostra" />
+                  ) : (
+                    <div className="st-img-placeholder">
+                      <span>📷 Sem visualização no histórico</span>
+                    </div>
+                  )}
                   <div className="card-content">
                     <h3>{res.name}</h3>
                     <div className="st-metrics">
