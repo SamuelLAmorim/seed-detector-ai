@@ -20,6 +20,23 @@ O **Seed Detector AI** foi desenvolvido para automatizar o processo de triagem d
 - **Exportação de Dados:** Geração de relatórios em CSV para integração com Excel/BI.
 
 ---
+## 📸 Tipos de Câmeras Compatíveis
+
+| Tipo de Câmera | Uso Principal | Vantagem |
+|----------------|---------------|----------|
+| 📱 **Casual** | Celular, GoPro | Detecção rápida e acessível |
+| 🌈 **RGN** | Imagem agrícola especializada | Análise avançada de saúde da planta |
+| 🎨 **RGB** | Câmera de cor padrão | Detecção de uso geral |
+| 🌌 **NIR** | Infravermelho Próximo | Monitoramento de estresse e hidratação |
+| 🔴 **RE** | Red Edge | Análise de saúde da vegetação |
+
+### ✔️ Status de Desenvolvimento
+
+- **Casual:** ✔️ Implementado  
+- **RGN, RGB, NIR, RE:** 🔧 Em Desenvolvimento 
+
+---
+
 
 ## 🛠️ Tecnologias e Ferramentas
 
@@ -61,9 +78,13 @@ Antes de começar, você precisará ter instalado em sua máquina:
 ### 📂 Estrutura do Repositório
    
    ├── frontend/          # Aplicação React e Estilização
+   
    ├── backend/           # API FastAPI e Lógica da IA (YOLO)
+   
    ├── storage/           # Armazenamento local de imagens analisadas
+   
    ├── docker-compose.yml # Orquestração dos containers
+   
    └── .env.example       # Modelo de variáveis de ambiente
 
 ### 🛡️ Segurança
