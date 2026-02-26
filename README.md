@@ -72,8 +72,8 @@ Antes de começar, você precisará ter instalado em sua máquina:
    docker-compose up --build
 
 4. **Acesse no seu navegador**
-- Frontend -> [text](http://localhost:5173)
-- Documentação da API(Swagger) -> [text](http://localhost:8000/docs)
+- Frontend -> (http://localhost:5173)
+- Documentação da API(Swagger) -> (http://localhost:8000/docs)
 
 ### 📂 Estrutura do Repositório
    
