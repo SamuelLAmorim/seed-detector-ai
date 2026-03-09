@@ -745,3 +745,26 @@ img, canvas, .st-chart-card {
   }
 }
 
+.demo-section {
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.demo-container {
+  display: flex;
+  gap: 40px;
+  max-width: 1000px;
+  margin: auto;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.demo-container img {
+  width: 400px;
+  border-radius: 12px;
+}
+
+.demo-info {
+  max-width: 400px;
+}

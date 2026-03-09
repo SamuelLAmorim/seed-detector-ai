@@ -59,11 +59,40 @@ const Home = ({ onStart }) => {
             <p>Utilize visão computacional avançada para classificar amostras em segundos. Precisão industrial para quem não pode perder tempo.</p>
             <div className="hero-btns">
               <button className="btn-main" onClick={onStart}>Iniciar Diagnóstico Grátis</button>
-              <button className="btn-secondary">Ver Demonstração</button>
+              <button
+                className="btn-secondary"
+                onClick={() =>
+                  document.getElementById("demo").scrollIntoView({ behavior: "smooth" })
+                }
+              >
+                Ver Demonstração
+              </button>
             </div>
           </div>
         </header>
-
+               
+        {/* DEMONSTRAÇÃO */}
+        <section id="demo" className="demo-section">
+          <h2>Veja a IA em ação</h2>
+        
+          <div className="demo-container">
+            <img
+              src="https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&w=800&q=80"
+              alt="sementes sendo analisadas"
+            />
+        
+            <div className="demo-info">
+              <p>
+                Nosso modelo YOLOv11 analisa sementes automaticamente,
+                classificando amostras em segundos.
+              </p>
+        
+              <button className="btn-main" onClick={onStart}>
+                Testar Agora
+              </button>
+            </div>
+          </div>
+        </section>
         {/* SECTION: SOBRE NÓS */}
         <section id="sobre" className="about-section">
           <div className="about-container">
