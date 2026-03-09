@@ -1,3 +1,17 @@
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.st-app {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: 100vh;
+  width: 100%;
+}
+
+
 :root {
   --st-bg: #f8f9fb;
   --st-sidebar-bg: #ffffff;
@@ -288,3 +302,446 @@ body {
   font-size: 0.9rem;
   font-weight: 500;
 }
+
+/* --- ESTILOS DA HOME PAGE  --- */
+:root {
+  --seed-green: #2e7d32;
+  --seed-light-green: #4caf50;
+  --seed-dark: #1b1f23;
+  --seed-bg: #fdfdfd;
+  --seed-text-gray: #667085;
+}
+
+* {
+  box-sizing: border-box; 
+}
+
+.home-wrapper { 
+  background: var(--seed-bg); 
+  font-family: 'Inter', sans-serif; 
+  color: var(--seed-dark);
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Navbar */
+.home-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #eaecf0;
+  position: sticky;
+  top: 0; 
+  z-index: 1000;
+  width: 100%;
+}
+
+.hero-section {
+  padding: 6rem 5%;
+  background: radial-gradient(circle at top right, #f0fdf4 0%, #ffffff 60%);
+  text-align: center;
+  width: 100%;
+}
+
+.home-nav .logo { 
+  font-size: 1.4rem; 
+  font-weight: 800; 
+  color: var(--seed-dark); 
+}
+
+.home-nav .logo span { 
+  font-size: 0.75rem; 
+  background: #e8f5e9; 
+  color: var(--seed-green); 
+  padding: 2px 10px; 
+  border-radius: 20px; 
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.nav-links a { 
+  margin-right: 2rem; 
+  text-decoration: none; 
+  color: var(--seed-text-gray); 
+  font-weight: 500; 
+  transition: 0.3s;
+}
+
+.nav-links a:hover { color: var(--seed-green); }
+
+.btn-login-small { 
+  background: var(--seed-dark) !important; 
+  color: white !important; 
+  border: none; 
+  padding: 0.6rem 1.5rem; 
+  border-radius: 8px; 
+  cursor: pointer; 
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.btn-login-small:hover { background: var(--seed-green) !important; }
+
+/* Hero Section */
+.hero-section {
+  padding: 8rem 5%;
+  background: radial-gradient(circle at top right, #f0fdf4 0%, #ffffff 60%);
+  text-align: center;
+}
+
+.badge-new { 
+  background: #d1fadf; 
+  color: var(--seed-green); 
+  padding: 8px 18px; 
+  border-radius: 30px; 
+  font-weight: 600; 
+  font-size: 0.85rem; 
+  display: inline-block;
+}
+
+.hero-section h1 { 
+  font-size: clamp(2rem, 5vw, 3.8rem); 
+  color: var(--seed-dark); 
+  margin: 1.5rem 0; 
+  line-height: 1.1; 
+  letter-spacing: -1px;
+}
+
+.hero-section h1 span { color: var(--seed-green); }
+
+.hero-section p { 
+  font-size: 1.25rem; 
+  color: var(--seed-text-gray); 
+  max-width: 750px; 
+  margin: 0 auto 3rem; 
+  line-height: 1.6;
+}
+
+.hero-btns {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.btn-main { 
+  background: var(--seed-green) !important; 
+  color: white !important; 
+  border: none !important; 
+  padding: 1.2rem 2.8rem; 
+  border-radius: 12px; 
+  font-size: 1.1rem; 
+  font-weight: 700; 
+  cursor: pointer; 
+  transition: 0.3s; 
+}
+
+.btn-main:hover { 
+  background: var(--seed-dark) !important; 
+  transform: translateY(-3px); 
+  box-shadow: 0 10px 25px rgba(46, 125, 50, 0.25);
+}
+
+.btn-secondary { 
+  background: white !important; 
+  color: var(--seed-green) !important;
+  border: 2px solid var(--seed-green) !important; 
+  padding: 1.2rem 2.8rem; 
+  border-radius: 12px; 
+  font-size: 1.1rem; 
+  font-weight: 700;
+  cursor: pointer; 
+  transition: 0.3s;
+}
+
+.btn-secondary:hover { background: #f0fdf4 !important; transform: translateY(-3px); }
+
+/* --- SEÇÃO SOBRE (LAYOUT 2 COLUNAS) --- */
+.about-section { 
+  padding: 7rem 5%; 
+  background: white; 
+}
+
+.about-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem 5%;
+}
+
+.about-text-content { flex: 1; }
+
+.section-subtitle {
+  color: var(--seed-green);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+.about-text-content h2 {
+  font-size: 2.8rem;
+  margin: 1rem 0;
+  line-height: 1.2;
+}
+
+.about-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 2rem;
+}
+
+.about-list li {
+  margin-bottom: 15px;
+  font-weight: 600;
+  color: var(--seed-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Imagem e Overlay */
+.about-image-wrapper { flex: 1; position: relative; }
+
+.about-image-placeholder {
+  width: 100%;
+  height: 450px;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.about-image-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.5s ease;
+}
+
+.image-overlay-card {
+  position: absolute;
+  bottom: -20px;
+  left: -20px;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  z-index: 2;
+}
+
+.image-overlay-card strong { font-size: 1.8rem; color: var(--seed-green); }
+.image-overlay-card span { font-size: 0.8rem; color: var(--seed-text-gray); font-weight: 600; }
+
+/* Grid de Cards Inferior */
+.about-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+  gap: 2.5rem; 
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.about-card { 
+  text-align: center; 
+  padding: 3rem 2rem; 
+  border-radius: 24px; 
+  background: #f9fafb;
+  transition: 0.3s; 
+  border: 1px solid transparent;
+}
+
+.about-card:hover { 
+  background: white;
+  border-color: #d1fadf;
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+}
+
+.about-card .icon { font-size: 3rem; margin-bottom: 1.5rem; display: block; }
+
+/* Pricing Section */
+.pricing-section { 
+  padding: 7rem 5%; 
+  background: #f9fafb; 
+  text-align: center; 
+}
+
+.section-header h2 { font-size: 2.5rem; margin-bottom: 1rem; color: var(--seed-dark); }
+.section-header p { color: var(--seed-text-gray); font-size: 1.1rem; margin-bottom: 4rem; }
+
+.pricing-container { 
+  display: grid; 
+  /* Aumentamos o minmax para 350px. Isso força o card a ser maior. */
+  /* O '1fr' fará com que eles cresçam para preencher o espaço disponível. */
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+  gap: 2rem; 
+  margin: 4rem auto; 
+  max-width: 1300px; /* Aumentamos um pouco a largura máxima do container */
+  padding: 0 5%;
+  align-items: stretch; /* Garante que todos os cards fiquem com a mesma altura */
+}
+
+.price-card { 
+  background: white; 
+  padding: 3.5rem 2.5rem; 
+  border-radius: 28px; 
+  border: 1px solid #eaecf0; 
+  position: relative; 
+  transition: 0.4s; 
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Garante que o card ocupe 100% da coluna do grid */
+}
+
+/* Opcional: Se quiser que o card do meio (Pro) se destaque um pouco mais */
+.plan-pro {
+  transform: scale(1.05); /* Leve aumento no tamanho */
+  z-index: 2;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.price-card:hover { 
+  border-color: var(--seed-green); 
+  transform: translateY(-10px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+}
+
+.price-tag { font-size: 3rem; font-weight: 800; margin: 1.5rem 0; color: var(--seed-dark); }
+
+.conf-info {
+  background: #f0fdf4;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  color: var(--seed-green);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.benefits-list { list-style: none; padding: 0; margin: 2rem 0; text-align: left; flex-grow: 1; }
+.benefits-list li { margin-bottom: 14px; color: #475467; display: flex; align-items: center; gap: 10px; }
+
+.btn-plan { 
+  width: 100%; 
+  padding: 1.1rem; 
+  border-radius: 12px; 
+  border: 2px solid var(--seed-dark); 
+  background: white !important; 
+  color: var(--seed-dark) !important;
+  font-weight: 700; 
+  font-size: 1rem;
+  cursor: pointer; 
+  transition: 0.3s;
+}
+
+.btn-plan:hover { background: var(--seed-dark) !important; color: white !important; }
+
+.plan-pro { border: 2px solid var(--seed-green); }
+.plan-pro .btn-plan { background: var(--seed-green) !important; color: white !important; border: none !important; }
+.plan-pro .btn-plan:hover { background: var(--seed-dark) !important; }
+
+.popular-tag { 
+  position: absolute; 
+  top: -16px; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  background: var(--seed-dark); 
+  color: white; 
+  padding: 6px 20px; 
+  border-radius: 30px; 
+  font-size: 0.85rem; 
+  font-weight: 600;
+}
+
+/* Footer */
+.main-footer { padding: 4rem 5%; background: var(--seed-dark); color: white; width: 100%; }
+.footer-content { 
+  display: flex; 
+  flex-wrap: wrap; /* Permite quebrar linha em telas pequenas */
+  justify-content: space-between; 
+  align-items: center; 
+  max-width: 1200px; 
+  margin: 0 auto;
+  gap: 2rem;
+}.footer-info h4 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.footer-info p { color: #98a2b3; }
+.footer-contact { text-align: right; color: #98a2b3; }
+.footer-contact a { color: white; text-decoration: none; font-weight: 600; }
+
+/* Responsividade */
+@media (max-width: 968px) {
+  /* Sobre nós */
+  .about-container { flex-direction: column; text-align: center; gap: 2rem; }
+  .about-image-wrapper { width: 100%; margin-top: 2rem; }
+  
+  /* Hero */
+  .hero-section h1 { font-size: 2.5rem !important; }
+  .hero-btns { flex-direction: column; gap: 1rem; }
+  
+  /* Pricing */
+  .pricing-container { grid-template-columns: 1fr; gap: 2rem; }
+  
+  /* Footer */
+  .footer-content { flex-direction: column; gap: 2rem; text-align: center; }
+  .footer-contact { text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .hero-section h1 { font-size: 2rem !important; }
+  .btn-main, .btn-secondary { width: 100%; margin-right: 0; }
+}
+
+@media (max-width: 968px) {
+  .st-app {
+    flex-direction: column; /* Coloca a sidebar em cima do conteúdo */
+  }
+
+  .st-sidebar {
+    width: 100%;
+    height: auto;
+    position: relative; /* Remove o position: fixed que travava a altura */
+    border-right: none;
+    border-bottom: 1px solid var(--st-border);
+  }
+
+  .st-main {
+    margin-left: 0;
+    width: 100%; /* O conteúdo passa a ocupar a largura total */
+    padding: 1.5rem;
+  }
+
+  /* Ajuste no Grid de Resultados para colunas menores */
+  .st-grid {
+    grid-template-columns: 1fr; /* Empilha os cards um embaixo do outro */
+  }
+
+  /* Ajuste no Grid de Estatísticas */
+  .st-chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 2. Garante que qualquer imagem ou gráfico não ultrapasse a largura do pai */
+img, canvas, .st-chart-card {
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* 3. Ajuste específico para o Login não ficar "preso" em telas muito pequenas */
+@media (max-height: 600px) {
+  .st-login-wrapper {
+    height: auto;
+    min-height: 100vh;
+    padding: 2rem 0;
+  }
+}
+

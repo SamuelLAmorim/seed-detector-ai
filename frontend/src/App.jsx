@@ -12,19 +12,22 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 import './App.css';
+import Home from './components/Home'; // Importando a nova Home
 
 // Registro dos componentes do Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
 function App() {
-  // --- ESTADOS ---
+  // --- ESTADOS DE NAVEGAÇÃO E AUTENTICAÇÃO ---
+  const [currentPage, setCurrentPage] = useState('home'); // 'home', 'login', 'dashboard'
   const [isRegistering, setIsRegistering] = useState(false);
   const [token, setToken] = useState(null);
-  const [activeTab, setActiveTab] = useState('analise');
   const [credentials, setCredentials] = useState({ username: '', password: '', email: '' });
-  
+
+  // --- ESTADOS DO DASHBOARD ---
+  const [activeTab, setActiveTab] = useState('analise');
   const [files, setFiles] = useState([]);
-  const [previewUrls, setPreviewUrls] = useState([]); 
+  const [previewUrls, setPreviewUrls] = useState([]);
   const [confidence, setConfidence] = useState(0.5);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -37,15 +40,15 @@ function App() {
           const res = await axios.get('http://localhost:8000/analysis/history', {
             headers: { 'Authorization': `Bearer ${token}` }
           });
-          
+
           const historyData = res.data.map(item => ({
             id: item.id,
-            name: `Análise #${item.id}`, 
+            name: `Análise #${item.id}`,
             inteiras: item.inteiras,
             quebradas: item.quebradas,
             predadas: item.predadas,
             total: item.total,
-            url: null // Histórico não traz URL de preview local
+            url: null
           }));
 
           setResults(historyData);
@@ -61,7 +64,6 @@ function App() {
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     setFiles(selectedFiles);
-
     const urls = selectedFiles.map(file => URL.createObjectURL(file));
     setPreviewUrls(urls);
   };
@@ -74,11 +76,12 @@ function App() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/users/login', 
+      const response = await axios.post('http://localhost:8000/users/login',
         `username=${credentials.username}&password=${credentials.password}`,
         { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
       );
       setToken(response.data.access_token);
+      setCurrentPage('dashboard'); // Vai para o dashboard após login
     } catch (err) {
       alert("Falha no login. Verifique usuário e senha.");
     }
@@ -104,7 +107,7 @@ function App() {
     if (files.length === 0) return alert("Selecione imagens primeiro!");
     setLoading(true);
     const newResults = [];
-    
+
     for (let file of files) {
       const formData = new FormData();
       formData.append('file', file);
@@ -112,10 +115,10 @@ function App() {
         const res = await axios.post(`http://localhost:8000/analysis/upload?conf=${confidence}`, formData, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        newResults.push({ 
-          name: file.name, 
-          ...res.data, 
-          url: URL.createObjectURL(file) 
+        newResults.push({
+          name: file.name,
+          ...res.data,
+          url: URL.createObjectURL(file)
         });
       } catch (err) {
         newResults.push({ name: file.name, error: "Erro na análise" });
@@ -137,7 +140,7 @@ function App() {
     link.click();
   };
 
-  // --- CÁLCULO DE ESTATÍSTICAS ---
+  // --- ESTATÍSTICAS ---
   const stats = useMemo(() => {
     return results.reduce((acc, curr) => ({
       inteiras: acc.inteiras + (Number(curr.inteiras) || 0),
@@ -157,19 +160,27 @@ function App() {
     }]
   };
 
-  // --- RENDERIZAÇÃO LOGIN ---
-  if (!token) {
+  // --- RENDERIZAÇÃO CONDICIONAL ---
+
+  // 1. HOME PAGE
+  if (currentPage === 'home') {
+    return <Home onStart={() => setCurrentPage('login')} />;
+  }
+
+  // 2. TELA DE LOGIN/CADASTRO
+  if (currentPage === 'login' && !token) {
     return (
       <div className="st-login-wrapper">
         <div className="st-login-card">
+          <button className="back-button" onClick={() => setCurrentPage('home')}>← Voltar</button>
           <h1>🌱 Seed Detector AI</h1>
           <p>{isRegistering ? 'Crie sua conta' : 'Acesse o painel de análise'}</p>
           <form onSubmit={isRegistering ? handleRegister : handleLogin}>
-            <input type="text" placeholder="Usuário" required onChange={e => setCredentials({...credentials, username: e.target.value})} />
+            <input type="text" placeholder="Usuário" required onChange={e => setCredentials({ ...credentials, username: e.target.value })} />
             {isRegistering && (
-              <input type="email" placeholder="E-mail" required onChange={e => setCredentials({...credentials, email: e.target.value})} />
+              <input type="email" placeholder="E-mail" required onChange={e => setCredentials({ ...credentials, email: e.target.value })} />
             )}
-            <input type="password" placeholder="Senha" required onChange={e => setCredentials({...credentials, password: e.target.value})} />
+            <input type="password" placeholder="Senha" required onChange={e => setCredentials({ ...credentials, password: e.target.value })} />
             <button type="submit" className="st-button-primary">
               {isRegistering ? 'Cadastrar Agora' : 'Entrar'}
             </button>
@@ -182,7 +193,7 @@ function App() {
     );
   }
 
-  // --- RENDERIZAÇÃO DASHBOARD ---
+  // 3. DASHBOARD (SÓ RENDERIZA SE TIVER TOKEN)
   return (
     <div className="st-app">
       <aside className="st-sidebar">
@@ -192,34 +203,33 @@ function App() {
         </div>
 
         <div className="st-menu">
-            <button className={activeTab === 'analise' ? 'active' : ''} onClick={() => setActiveTab('analise')}>🔍 Análise Local</button>
-            <button className={activeTab === 'estatisticas' ? 'active' : ''} onClick={() => setActiveTab('estatisticas')}>📊 Estatísticas Gerais</button>
+          <button className={activeTab === 'analise' ? 'active' : ''} onClick={() => setActiveTab('analise')}>🔍 Análise Local</button>
+          <button className={activeTab === 'estatisticas' ? 'active' : ''} onClick={() => setActiveTab('estatisticas')}>📊 Estatísticas Gerais</button>
         </div>
 
         <hr className="st-divider" />
-        
+
         <div className="st-sidebar-item">
           <label>📁 Carregar Imagens</label>
           <input type="file" multiple onChange={handleFileChange} />
-          
           {previewUrls.length > 0 && (
             <div className="st-sidebar-preview-container">
-               <img src={previewUrls[0]} className="st-upload-preview" alt="Preview" />
-               {files.length > 1 && <p>+ {files.length - 1} fotos selecionadas</p>}
+              <img src={previewUrls[0]} className="st-upload-preview" alt="Preview" />
+              {files.length > 1 && <p>+ {files.length - 1} fotos selecionadas</p>}
             </div>
           )}
         </div>
 
         <div className="st-sidebar-item">
           <label>🎯 Confiança: <strong>{Math.round(confidence * 100)}%</strong></label>
-          <input 
-            type="range" 
-            min="0.01" 
-            max="1.00" 
-            step="0.01" 
-            value={confidence} 
-            onChange={e => setConfidence(parseFloat(e.target.value))} 
-            className="st-slider" 
+          <input
+            type="range"
+            min="0.01"
+            max="1.00"
+            step="0.01"
+            value={confidence}
+            onChange={e => setConfidence(parseFloat(e.target.value))}
+            className="st-slider"
           />
         </div>
 
@@ -231,7 +241,7 @@ function App() {
           {results.length > 0 && (
             <button onClick={downloadCSV} className="st-button-csv">📥 Exportar Planilha</button>
           )}
-          <button onClick={() => setToken(null)} className="st-button-logout">Sair do Sistema</button>
+          <button onClick={() => { setToken(null); setCurrentPage('home'); }} className="st-button-logout">Sair do Sistema</button>
         </div>
       </aside>
 
@@ -270,25 +280,25 @@ function App() {
               <h1>📊 Estatísticas do Lote</h1>
               <p>Resumo total de <strong>{results.length}</strong> análises.</p>
             </header>
-            
+
             {results.length > 0 ? (
               <div className="st-chart-grid">
                 <div className="st-chart-card">
                   <h3>Distribuição Relativa</h3>
-                  <div style={{width: '100%', height: '300px'}}>
+                  <div style={{ width: '100%', height: '300px' }}>
                     <Pie data={chartData} options={{ maintainAspectRatio: false }} />
                   </div>
                 </div>
                 <div className="st-chart-card">
                   <h3>Volume Total</h3>
-                  <div style={{width: '100%', height: '300px'}}>
+                  <div style={{ width: '100%', height: '300px' }}>
                     <Bar data={chartData} options={{ maintainAspectRatio: false }} />
                   </div>
                 </div>
               </div>
             ) : (
               <div className="st-empty-state">
-                 <p>Nenhuma análise realizada para gerar estatísticas.</p>
+                <p>Nenhuma análise realizada para gerar estatísticas.</p>
               </div>
             )}
           </div>
