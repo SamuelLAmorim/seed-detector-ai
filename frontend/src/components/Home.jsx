@@ -1,3 +1,5 @@
+import { useState } from "react";
+import seedsImg from "../assets/demo-seeds.png";
 
 // 1. Extração de Dados 
 const PLANOS = [
@@ -35,6 +37,9 @@ const DIFERENCIAIS = [
 ];
 
 const Home = ({ onStart }) => {
+
+  const [detecting, setDetecting] = useState(false);
+
   return (
     <div className="home-wrapper">
       {/* HEADER: Navegação Principal */}
@@ -74,20 +79,36 @@ const Home = ({ onStart }) => {
         {/* DEMONSTRAÇÃO */}
         <section id="demo" className="demo-section">
           <h2>Veja a IA em ação</h2>
-        
-          <div className="demo-container">
-            <img
-              src="https://images.unsplash.com/photo-1589923188900-85dae523342b?auto=format&fit=crop&w=800&q=80"
-              alt="sementes sendo analisadas"
-            />
-        
+             <div className="demo-container">
+                <div className="demo-image">
+                   <img
+                    src={seedsImg} alt="sementes sendo analisadas"
+                   />
+               
+                     {detecting && (
+                       <>
+                         <div className="yolo-box box1">
+                           <span>Whole Seed 94%</span>
+                         </div>
+                     
+                         <div className="yolo-box box2">
+                           <span>Broken Seed 88%</span>
+                         </div>
+                       </>
+                     )}
+               
+                </div>
+               
             <div className="demo-info">
               <p>
-                Nosso modelo YOLOv11 analisa sementes automaticamente,
+                Nosso modelo analisa sementes automaticamente,
                 classificando amostras em segundos.
               </p>
         
-              <button className="btn-main" onClick={onStart}>
+              <button 
+                className="btn-main" 
+                onClick={() => setDetecting(true)}
+              >
                 Testar Agora
               </button>
             </div>
@@ -98,9 +119,9 @@ const Home = ({ onStart }) => {
           <div className="about-container">
             <article className="about-text-content">
               <span className="section-subtitle">Inovação no Campo</span>
-              <h2>Tecnologia que entende a terra</h2>
+              <h2>Tecnologia que entende o Agro</h2>
               <p>
-                O Seed AI nasceu da necessidade de eliminar o erro humano na triagem de qualidade. 
+                O Seedetector AI nasceu da necessidade de eliminar o erro humano na triagem de qualidade. 
                 Nossa plataforma utiliza redes neurais profundas para identificar padrões que o olho humano 
                 pode deixar passar, garantindo lotes mais homogêneos e lucrativos.
               </p>
