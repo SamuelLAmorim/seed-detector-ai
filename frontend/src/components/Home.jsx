@@ -1,5 +1,6 @@
 import { useState } from "react";
 import seedsImg from "../assets/demo-seeds.png";
+import futureImg from "../assets/multispectral-future.png";
 
 // 1. Extração de Dados 
 const PLANOS = [
@@ -158,6 +159,43 @@ const Home = ({ onStart }) => {
           </div>
         </section>
 
+         {/* SECTION: FUTURO MULTIESPECTRAL */}
+         
+         <section className="future-section">
+         
+           <div className="future-container">
+         
+             <div className="future-text">
+         
+               <span className="section-subtitle">Próxima Evolução</span>
+         
+               <h2>Análise com câmeras multiespectrais</h2>
+         
+               <p>
+                 Estamos expandindo o Seedetector AI para trabalhar com sensores
+                 multiespectrais capazes de identificar propriedades invisíveis
+                 ao olho humano.
+               </p>
+         
+               <ul>
+                 <li>📷 Integração com câmeras científicas</li>
+                 <li>🌈 Análise espectral das sementes</li>
+                 <li>🧬 Detecção de danos internos</li>
+                 <li>📊 Diagnóstico avançado de qualidade</li>
+               </ul>
+         
+             </div>
+         
+               <div className="future-video">
+                 <img
+                   src={futureImg}
+                   alt="Análise multiespectral de sementes"
+                 />
+               </div>
+         
+             </div>
+                          
+         </section>
         {/* SECTION: PLANOS */}
         <section id="planos" className="pricing-section">
           <header className="section-header">

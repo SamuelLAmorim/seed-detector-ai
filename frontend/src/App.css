@@ -823,3 +823,44 @@ height:80px;
     transform: scale(1);
   }
 }
+
+.future-section{
+padding:100px 10%;
+background:#0f172a;
+color:white;
+}
+
+.future-container{
+display:flex;
+align-items:center;
+gap:60px;
+flex-wrap:wrap;
+}
+
+.future-text{
+flex:1;
+}
+
+.future-text h2{
+margin:10px 0 20px;
+}
+
+.future-text ul{
+margin-top:20px;
+list-style:none;
+padding:0;
+}
+
+.future-text li{
+margin-bottom:10px;
+}
+
+.future-video{
+flex:1;
+}
+
+.future-video img{
+width:100%;
+border-radius:12px;
+box-shadow:0 10px 40px rgba(0,0,0,0.5);
+}
