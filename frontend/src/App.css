@@ -618,14 +618,19 @@ body {
 
 .pricing-container { 
   display: grid; 
-  /* Aumentamos o minmax para 350px. Isso força o card a ser maior. */
-  /* O '1fr' fará com que eles cresçam para preencher o espaço disponível. */
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+  grid-template-columns: repeat(3, 1fr); 
   gap: 2rem; 
   margin: 4rem auto; 
-  max-width: 1300px; /* Aumentamos um pouco a largura máxima do container */
+  max-width: 1440px; 
   padding: 0 5%;
-  align-items: stretch; /* Garante que todos os cards fiquem com a mesma altura */
+  align-items: stretch;
+}
+
+/* No celular, você muda para 1 coluna só */
+@media (max-width: 768px) {
+  .pricing-container {
+    grid-template-columns: 1fr;
+  }
 }
 
 .price-card { 
@@ -640,11 +645,11 @@ body {
   width: 100%; /* Garante que o card ocupe 100% da coluna do grid */
 }
 
-/* Opcional: Se quiser que o card do meio (Pro) se destaque um pouco mais */
 .plan-pro {
-  transform: scale(1.05); /* Leve aumento no tamanho */
+  transform: scale(1);
   z-index: 2;
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  border: 2px solid var(--seed-green);
 }
 
 .price-card:hover { 
@@ -808,13 +813,13 @@ img, canvas, .st-chart-card {
 }
 
 .demo-image {
-  position: relative;
-  display: inline-block;
+  overflow: hidden;
 }
 
 .demo-image img {
-  width: 400px;
-  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  display: block;
 }
 
 /* caixas YOLO */
@@ -833,16 +838,29 @@ animation:detect 1s ease-out;
 
 .box1{
 top:14%;
-left:10%;
-width:120px;
-height:90px;
+left:7%;
+width:160px;
+height:150px;
+border: 2px solid #00ff00;
+background: rgba(0,255,0,0.1);
+border-radius: 8px;
+color: white;
+font-weight: bold;
+padding: 4px;;
 }
 
-.box2{
-top:50%;
-left:60%;
-width:110px;
-height:80px;
+.box2 {
+  position: absolute;
+  top: 52%;      
+  left: 62%;     
+  width: 140px;  
+  height: 130px; 
+  border: 2px solid #00ff00;
+  background: rgba(0, 255, 0, 0.1);
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  padding: 4px;
 }
 
 /* animação */
@@ -912,4 +930,39 @@ flex:1;
 width:100%;
 border-radius:12px;
 box-shadow:0 10px 40px rgba(0,0,0,0.5);
+}
+
+.demo-container {
+  flex-wrap: nowrap;
+  padding: 0;
+  gap: 0;
+}
+
+.demo-image {
+  overflow: hidden;
+  border-radius: 16px 0 0 16px;
+  flex-shrink: 0;
+  width: 50%;
+}
+
+.demo-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  max-width: none;
+}
+
+.demo-info {
+  width: 50%;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.demo-image {
+  width: 60%;
+}
+
+.demo-info {
+  width: 40%;
 }
