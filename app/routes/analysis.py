@@ -57,7 +57,7 @@ async def upload_image(
     # 4. Salvar no Banco de Dados
     new_detection = Detection(
         inteiras=counts.get("inteira", 0),
-        predadas=counts.get("predada", 0),
+        predadas=counts.get("pedrada", 0),
         quebradas=counts.get("quebrada", 0),
         total=sum(counts.values()),
         modelo_utilizado="YOLOv11_Seed",
