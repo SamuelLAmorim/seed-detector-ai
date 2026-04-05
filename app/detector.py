@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 import os
+import base64
 
 class SeedDetector:
     def __init__(self, model_path: str = "models/best.pt"):
@@ -32,8 +33,11 @@ class SeedDetector:
             elif "pedrada" in class_name or "bug" in class_name or "pred" in class_name:
                 counts["pedrada"] += 1
             else:
-                # Loga classes desconhecidas em vez de classificar errado
-                print(f"--- AVISO: classe desconhecida detectada: '{class_name}' ---")
+                print(f"--- AVISO: classe desconhecida: '{class_name}' ---")
 
+        # Gera imagem anotada e converte para base64
         annotated_img = results.plot()
-        return counts, annotated_img
+        _, buffer = cv2.imencode(".jpg", annotated_img, [cv2.IMWRITE_JPEG_QUALITY, 85])
+        annotated_b64 = base64.b64encode(buffer).decode("utf-8")
+
+        return counts, annotated_b64

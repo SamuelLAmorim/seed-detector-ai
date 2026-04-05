@@ -10,7 +10,6 @@ from app.models import Detection, User
 from app.detector import SeedDetector
 from app.auth import oauth2_scheme, SECRET_KEY, ALGORITHM
 
-# Adicionamos o prefixo e as tags para organização automática no Swagger
 router = APIRouter(prefix="/analysis", tags=["Análise"])
 detector = SeedDetector()
 
@@ -18,7 +17,6 @@ def get_current_user(db: Session, token: str):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
-        # O db.exec(select(...)) do SQLModel às vezes confunde o FastAPI se não tipado
         user = db.exec(select(User).where(User.username == username)).first()
         if not user:
             raise HTTPException(status_code=401, detail="Usuário não encontrado")
@@ -26,35 +24,28 @@ def get_current_user(db: Session, token: str):
     except Exception:
         raise HTTPException(status_code=401, detail="Token inválido")
 
-# response_model=None para evitar que o FastAPI 
-# tente validar objetos complexos de banco de dados no retorno.
+
 @router.post("/upload", response_model=None)
 async def upload_image(
     file: UploadFile = File(...),
-    conf: float = 0.25, 
+    conf: float = 0.25,
     db: Session = Depends(get_session),
     token: str = Depends(oauth2_scheme)
 ):
-    # 1. Autenticação
     user = get_current_user(db, token)
-    
-    # 2. Persistência física da imagem
+
     if not os.path.exists("storage"):
         os.makedirs("storage")
-        
+
     file_path = f"storage/{datetime.now().timestamp()}_{file.filename}"
-    
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    # 3. Leitura e Predição
     with open(file_path, "rb") as f:
         image_bytes = f.read()
-    
-    # Passamos o 'conf' que vem do slider do Frontend
-    counts, annotated_img = detector.predict(image_bytes, conf=conf)
 
-    # 4. Salvar no Banco de Dados
+    counts, annotated_b64 = detector.predict(image_bytes, conf=conf)
+
     new_detection = Detection(
         inteiras=counts.get("inteira", 0),
         predadas=counts.get("pedrada", 0),
@@ -65,19 +56,20 @@ async def upload_image(
         image_path=file_path,
         user_id=user.id
     )
-    
+
     db.add(new_detection)
     db.commit()
     db.refresh(new_detection)
-
 
     return {
         "inteiras": new_detection.inteiras,
         "quebradas": new_detection.quebradas,
         "predadas": new_detection.predadas,
         "total": new_detection.total,
-        "id_deteccao": new_detection.id
+        "id_deteccao": new_detection.id,
+        "annotated_image": annotated_b64,  # ← imagem anotada em base64
     }
+
 
 @router.get("/history", response_model=None)
 async def get_history(
@@ -85,8 +77,64 @@ async def get_history(
     token: str = Depends(oauth2_scheme)
 ):
     user = get_current_user(db, token)
-    # Busca todas as detecções do usuário logado
-    statement = select(Detection).where(Detection.user_id == user.id)
+    statement = select(Detection).where(Detection.user_id == user.id).order_by(Detection.id.desc())
     history = db.exec(statement).all()
-    
     return history
+
+
+@router.delete("/{detection_id}", response_model=None)
+async def delete_detection(
+    detection_id: int,
+    db: Session = Depends(get_session),
+    token: str = Depends(oauth2_scheme)
+):
+    user = get_current_user(db, token)
+    detection = db.get(Detection, detection_id)
+
+    if not detection:
+        raise HTTPException(status_code=404, detail="Análise não encontrada")
+    if detection.user_id != user.id:
+        raise HTTPException(status_code=403, detail="Sem permissão para deletar esta análise")
+
+    # Remove imagem do disco se existir
+    if detection.image_path and os.path.exists(detection.image_path):
+        os.remove(detection.image_path)
+
+    db.delete(detection)
+    db.commit()
+    return {"message": "Análise deletada com sucesso"}
+
+
+@router.get("/profile", response_model=None)
+async def get_profile(
+    db: Session = Depends(get_session),
+    token: str = Depends(oauth2_scheme)
+):
+    user = get_current_user(db, token)
+    statement = select(Detection).where(Detection.user_id == user.id)
+    detections = db.exec(statement).all()
+
+    total_analises = len(detections)
+    total_sementes = sum(d.total for d in detections)
+    total_inteiras = sum(d.inteiras for d in detections)
+    total_quebradas = sum(d.quebradas for d in detections)
+    total_predadas = sum(d.predadas for d in detections)
+    aproveitamento = round((total_inteiras / total_sementes * 100), 1) if total_sementes > 0 else 0
+
+    ultima_analise = None
+    if detections:
+        ultima = max(detections, key=lambda d: d.id)
+        ultima_analise = str(ultima.created_at) if ultima.created_at else None
+
+    return {
+        "username": user.username,
+        "email": user.email,
+        "full_name": user.full_name,
+        "total_analises": total_analises,
+        "total_sementes": total_sementes,
+        "total_inteiras": total_inteiras,
+        "total_quebradas": total_quebradas,
+        "total_predadas": total_predadas,
+        "aproveitamento_geral": aproveitamento,
+        "ultima_analise": ultima_analise,
+    }
