@@ -14,21 +14,38 @@
 O **Seed Detector AI** foi desenvolvido para automatizar o processo de triagem de sementes. Utilizando o modelo **YOLOv11**, o sistema é capaz de identificar em tempo real sementes **Inteiras**, **Quebradas** e **Predadas**, fornecendo métricas precisas para controle de qualidade agrícola ou pesquisas científicas.
 
 ### 🎥 Demonstração das Funcionalidades
-- **Análise Dinâmica:** Upload de imagens com ajuste de *threshold* (confiança) via slider.
-- **Dashboard Estatístico:** Visualização clara da distribuição dos lotes via gráficos de pizza e barras.
-- **Histórico de Usuário:** Banco de dados integrado para persistência e consulta de análises passadas.
-- **Exportação de Dados:** Geração de relatórios em CSV para integração com Excel/BI.
+
+- 📤 Upload de imagens  
+- 🎚️ Ajuste de confiança (*threshold*)  
+- 📊 Dashboard com gráficos  
+- 🧾 Exportação CSV  
+- 🔐 Autenticação JWT  
+- 🗂️ Histórico de análises  
 
 ---
-## 📸 Tipos de Câmeras Compatíveis
+## 🚀 Proposta de Valor
 
-| Tipo de Câmera | Uso Principal | Vantagem |
-|----------------|---------------|----------|
-| 📱 **Casual** | Celular, GoPro | Detecção rápida e acessível |
-| 🌈 **RGN** | Imagem agrícola especializada | Análise avançada de saúde da planta |
-| 🎨 **RGB** | Câmera de cor padrão | Detecção de uso geral |
-| 🌌 **NIR** | Infravermelho Próximo | Monitoramento de estresse e hidratação |
-| 🔴 **RE** | Red Edge | Análise de saúde da vegetação |
+O **SeeDetector AI** automatiza a análise de qualidade de sementes, substituindo processos manuais, subjetivos e demorados por uma solução digital, rápida e escalável.
+
+Com o uso de modelos de **Deep Learning (YOLO)**, a plataforma permite:
+
+- 📸 Identificação automática de sementes  
+- 📊 Geração de métricas em tempo real  
+- 📁 Registro e rastreabilidade de análises  
+- 📈 Apoio à tomada de decisão no agronegócio  
+
+---
+## 🧪 Classificação Inteligente
+
+O modelo de IA realiza a identificação automática das sementes em três categorias:
+
+| Classe | Descrição |
+|--------|----------|
+| 🌱 Inteira | Sementes saudáveis e aptas para plantio |
+| 🪨 Quebrada | Sementes com danos estruturais |
+| 🐛 Predada | Sementes comprometidas por pragas |
+
+👉 A classificação é feita em tempo real utilizando visão computacional baseada em YOLO.
 
 ### ✔️ Status de Desenvolvimento
 
