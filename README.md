@@ -1,6 +1,50 @@
 ﻿# Seed Detector AI
+![GitHub repo size](https://img.shields.io/github/repo-size/SamuelLAmorim/PrecisionCert-Centelha?style=for-the-badge)
+![GitHub language count](https://img.shields.io/github/languages/count/SamuelLAmorim/PrecisionCert-Centelha?style=for-the-badge)
+![GitHub last commit](https://img.shields.io/github/last-commit/SamuelLAmorim/PrecisionCert-Centelha?style=for-the-badge)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-Aplicacao full-stack para analise de qualidade de sementes com FastAPI, React e modelo YOLO.
+> Aplicacao full-stack para analise de qualidade de sementes com FastAPI, React e modelo YOLO. inteligente para certificação e análise de qualidade de sementes utilizando Inteligência Artificial e Visão Computacional.
+
+---
+
+
+## 🚀 Proposta de Valor
+
+O **SeeDetector AI** automatiza a análise de qualidade de sementes, substituindo processos manuais, subjetivos e demorados por uma solução digital, rápida e escalável.
+
+Com o uso de modelos de **Deep Learning (YOLO)**, a plataforma permite:
+
+- 📸 Identificação automática de sementes  
+- 📊 Geração de métricas em tempo real  
+- 📁 Registro e rastreabilidade de análises  
+- 📈 Apoio à tomada de decisão no agronegócio  
+
+---
+
+## 🌾 Problema
+
+A avaliação da qualidade de sementes ainda depende de:
+
+- Análise manual  
+- Alto custo operacional  
+- Baixa padronização  
+- Suscetibilidade a erro humano  
+
+👉 Impacta diretamente produtividade e qualidade no agro.
+
+---
+
+## 💡 Solução
+
+O SeeDetector AI oferece:
+
+- Detecção automática de sementes **Inteiras, Quebradas e Predadas**  
+- Interface web simples e acessível  
+- Processamento rápido com IA  
+- Exportação de relatórios  
+
+---
 
 ## O que o projeto faz
 
@@ -24,6 +68,33 @@ Aplicacao full-stack para analise de qualidade de sementes com FastAPI, React e 
 - `frontend/`: interface React
 - `models/`: pesos do modelo YOLO
 - `storage/`: imagens processadas
+
+---
+
+## 📊 Funcionalidades
+
+- 📤 Upload de imagens  
+- 🎚️ Ajuste de confiança (*threshold*)  
+- 📊 Dashboard com gráficos  
+- 🧾 Exportação CSV  
+- 🔐 Autenticação JWT  
+- 🗂️ Histórico de análises  
+
+---
+
+## 🧪 Classificação Inteligente
+
+O modelo de IA realiza a identificação automática das sementes em três categorias:
+
+| Classe | Descrição |
+|--------|----------|
+| 🌱 Inteira | Sementes saudáveis e aptas para plantio |
+| 🪨 Quebrada | Sementes com danos estruturais |
+| 🐛 Predada | Sementes comprometidas por pragas |
+
+👉 A classificação é feita em tempo real utilizando visão computacional baseada em YOLO.
+
+---
 
 ## Variaveis de ambiente
 
@@ -82,3 +153,9 @@ Para Azure App Service, Container Apps ou pipelines no Azure DevOps, configure p
 ## Estado atual
 
 O projeto esta pronto para desenvolvimento local e mais consistente para deploy, mas ainda vale evoluir com testes automatizados e pipeline de CI/CD.
+
+
+## 📄 Licença
+
+© 2026 SeeDetector AI. Desenvolvido por Samuel Amorim.  
+Todos os direitos reservados.
