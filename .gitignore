@@ -1,6 +1,8 @@
-# Segurança e Ambiente
+﻿# Seguranca e Ambiente
 .env
 .env.local
+frontend/.env
+frontend/.env.local
 .vscode/
 
 # Python
@@ -9,8 +11,9 @@ __pycache__/
 *$py.class
 venv/
 .venv/
+.pytest_cache/
 
-# Banco de Dados e Uploads (Não queremos subir fotos de teste)
+# Banco de Dados e Uploads
 *.db
 storage/
 backend/storage/

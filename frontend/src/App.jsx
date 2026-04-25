@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from './api';
 import {
   ArcElement, BarElement, CategoryScale, Chart as ChartJS,
   Legend, LinearScale, LineElement, PointElement, Title, Tooltip,
@@ -214,9 +214,9 @@ function ProfilePage({ profile, onClose }) {
 
 // ── APP ──────────────────────────────────────────────────
 function App() {
-  const [currentPage, setCurrentPage] = useState('home');
+  const [currentPage, setCurrentPage] = useState(() => (localStorage.getItem('seedToken') ? 'dashboard' : 'home'));
   const [isRegistering, setIsRegistering] = useState(false);
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(() => localStorage.getItem('seedToken'));
   const [credentials, setCredentials] = useState({ username: '', password: '', email: '' });
   const [activeTab, setActiveTab] = useState('analise');
   const [files, setFiles] = useState([]);
@@ -234,6 +234,15 @@ function App() {
     localStorage.setItem('theme', dark ? 'dark' : 'light');
   }, [dark]);
 
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem('seedToken', token);
+      return;
+    }
+
+    localStorage.removeItem('seedToken');
+  }, [token]);
+
   const addToast = (message, type = 'success') => {
     const id = Date.now();
     setToasts(prev => [...prev, { id, message, type }]);
@@ -241,23 +250,37 @@ function App() {
   };
   const removeToast = (id) => setToasts(prev => prev.filter(t => t.id !== id));
 
+  const logout = () => {
+    setToken(null);
+    setCurrentPage('home');
+    setProfile(null);
+    setResults([]);
+    setFiles([]);
+    setPreviewUrls([]);
+  };
+
+  const handleUnauthorized = () => {
+    logout();
+    addToast('Sua sessao expirou. Entre novamente.', 'warning');
+  };
+
   const fetchHistory = async (tkn) => {
     try {
-      const res = await axios.get('http://localhost:8000/analysis/history', { headers: { Authorization: `Bearer ${tkn}` } });
+      const res = await api.get('/analysis/history', { headers: { Authorization: `Bearer ${tkn}` } });
       setResults(res.data.map(item => ({
         id: item.id, name: `Análise #${item.id}`,
         inteiras: item.inteiras, quebradas: item.quebradas,
         predadas: item.predadas, total: item.total, url: null,
         timestamp: item.created_at || null,
       })));
-    } catch (err) { console.error(err); }
+    } catch (err) { if (err?.response?.status === 401) handleUnauthorized(); console.error(err); }
   };
 
   const fetchProfile = async (tkn) => {
     try {
-      const res = await axios.get('http://localhost:8000/analysis/profile', { headers: { Authorization: `Bearer ${tkn}` } });
+      const res = await api.get('/analysis/profile', { headers: { Authorization: `Bearer ${tkn}` } });
       setProfile(res.data);
-    } catch (err) { console.error(err); }
+    } catch (err) { if (err?.response?.status === 401) handleUnauthorized(); console.error(err); }
   };
 
   useEffect(() => {
@@ -278,22 +301,31 @@ function App() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:8000/users/login',
-        `username=${credentials.username}&password=${credentials.password}`,
-        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+      const payload = new URLSearchParams({ username: credentials.username, password: credentials.password });
+      const res = await api.post('/users/login', payload, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
       setToken(res.data.access_token);
       setCurrentPage('dashboard');
-      addToast('Login realizado com sucesso! 🌱');
-    } catch { addToast('Falha no login. Verifique usuário e senha.', 'error'); }
+      setCredentials({ username: '', password: '', email: '' });
+      addToast('Login realizado com sucesso! ??');
+    } catch (err) {
+      const message = err?.response?.data?.detail || 'Falha no login. Verifique usuario e senha.';
+      addToast(message, 'error');
+    }
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8000/users/signup', credentials);
-      addToast('Conta criada! Faça seu login.');
+      await api.post('/users/signup', credentials);
+      setCredentials({ username: '', password: '', email: '' });
+      addToast('Conta criada! Faca seu login.');
       setIsRegistering(false);
-    } catch { addToast('Erro ao cadastrar. Usuário já existe?', 'error'); }
+    } catch (err) {
+      const message = err?.response?.data?.detail || 'Erro ao cadastrar. Revise os dados informados.';
+      addToast(message, 'error');
+    }
   };
 
   const handleAnalyzeAll = async () => {
@@ -305,46 +337,69 @@ function App() {
       const fd = new FormData();
       fd.append('file', file);
       try {
-        const res = await axios.post(`http://localhost:8000/analysis/upload?conf=${confidence}`, fd, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await api.post(`/analysis/upload?conf=${confidence}`, fd, { headers: { Authorization: `Bearer ${token}` } });
         newResults.push({
           name: file.name,
           ...res.data,
-          // Usa imagem anotada do YOLO se disponível, senão usa a original
           url: res.data.annotated_image
             ? `data:image/jpeg;base64,${res.data.annotated_image}`
             : URL.createObjectURL(file),
           timestamp: new Date().toISOString(),
         });
-      } catch {
+      } catch (err) {
+        if (err?.response?.status === 401) {
+          handleUnauthorized();
+          setLoading(false);
+          return;
+        }
         errors++;
-        newResults.push({ name: file.name, error: 'Erro na análise', inteiras: 0, quebradas: 0, predadas: 0 });
+        newResults.push({
+          name: file.name,
+          error: err?.response?.data?.detail || 'Erro na analise',
+          inteiras: 0,
+          quebradas: 0,
+          predadas: 0,
+        });
       }
     }
     setResults(newResults);
     setLoading(false);
     await fetchProfile(token);
-    errors === 0 ? addToast(`${newResults.length} análise(s) concluída(s)!`) : addToast(`Concluído com ${errors} erro(s).`, 'warning');
+    errors === 0 ? addToast(`${newResults.length} analise(s) concluida(s)!`) : addToast(`Concluido com ${errors} erro(s).`, 'warning');
   };
 
   const handleDelete = async (id) => {
     if (!id) return;
     setDeletingId(id);
     try {
-      await axios.delete(`http://localhost:8000/analysis/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      await api.delete(`/analysis/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       setResults(prev => prev.filter(r => r.id !== id));
       await fetchProfile(token);
-      addToast('Análise removida!');
-    } catch {
-      addToast('Erro ao deletar análise.', 'error');
+      addToast('Analise removida!');
+    } catch (err) {
+      if (err?.response?.status === 401) {
+        handleUnauthorized();
+      } else {
+        addToast(err?.response?.data?.detail || 'Erro ao deletar analise.', 'error');
+      }
     } finally {
       setDeletingId(null);
     }
   };
 
   const downloadCSV = () => {
+    const escapeCell = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
     const rows = results.map(r => [r.name, r.inteiras, r.quebradas, r.predadas, r.inteiras + r.quebradas + r.predadas]);
-    const csv = "data:text/csv;charset=utf-8," + [["Arquivo","Inteiras","Quebradas","Predadas","Total"], ...rows].map(r => r.join(",")).join("\n");
-    const a = document.createElement("a"); a.href = encodeURI(csv); a.download = "relatorio_sementes.csv"; a.click();
+    const csvContent = [["Arquivo", "Inteiras", "Quebradas", "Predadas", "Total"], ...rows]
+      .map(row => row.map(escapeCell).join(';'))
+      .join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'relatorio_sementes.csv';
+    a.click();
+    URL.revokeObjectURL(url);
     addToast('Planilha exportada!');
   };
 
@@ -465,7 +520,7 @@ function App() {
 
           <div className="st-sidebar-footer">
             {results.length > 0 && <button onClick={downloadCSV} className="st-button-csv" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>📥 Exportar Planilha</button>}
-            <button onClick={() => { setToken(null); setCurrentPage('home'); setProfile(null); }} className="st-button-logout">Sair do Sistema</button>
+            <button onClick={logout} className="st-button-logout">Sair do Sistema</button>
           </div>
         </aside>
 
