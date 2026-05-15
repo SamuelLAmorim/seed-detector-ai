@@ -108,7 +108,7 @@ const Home = ({ onStart }) => {
         }}
       >
         <div className="logo">
-          🌱 Seedetector AI{" "}
+          🌱 SeeDetector AI{" "}
           <span>v3.0</span>
         </div>
         <div className="nav-links">
@@ -201,7 +201,7 @@ const Home = ({ onStart }) => {
                 <span className="section-subtitle">Quem Somos</span>
                 <h2>Tecnologia que entende o Agro</h2>
                 <p style={{ lineHeight: 1.8, color: "#667085", fontSize: "1.05rem" }}>
-                  O Seedetector AI nasceu da necessidade de eliminar o erro humano na triagem de qualidade.
+                  O SeeDetector AI nasceu da necessidade de eliminar o erro humano na triagem de qualidade.
                   Nossa plataforma utiliza redes neurais profundas para identificar padrões que o olho humano
                   pode deixar passar, garantindo lotes mais homogêneos e lucrativos.
                 </p>
@@ -368,7 +368,7 @@ const Home = ({ onStart }) => {
                   Análise com câmeras multiespectrais
                 </h2>
                 <p style={{ opacity: 0.75, lineHeight: 1.8, maxWidth: "480px", marginBottom: "28px" }}>
-                  Estamos expandindo o Seedetector AI para trabalhar com sensores
+                  Estamos expandindo o SeeDetector AI para trabalhar com sensores
                   multiespectrais capazes de identificar propriedades invisíveis ao olho humano.
                 </p>
                 <ul>
@@ -451,7 +451,7 @@ const Home = ({ onStart }) => {
 
             {/* Logo + descrição + redes */}
             <div style={{ maxWidth: "260px" }}>
-              <h4 style={{ fontSize: "1.3rem", marginBottom: "8px" }}>🌱 Seedetector AI</h4>
+              <h4 style={{ fontSize: "1.3rem", marginBottom: "8px" }}>🌱 SeeDetector AI</h4>
               <p style={{ color: "#98a2b3", lineHeight: 1.7, fontSize: "0.9rem" }}>
                 Inovação digital para o agronegócio moderno. Precisão industrial ao alcance de todos.
               </p>
@@ -542,7 +542,7 @@ const Home = ({ onStart }) => {
             alignItems: "center", flexWrap: "wrap", gap: "12px",
           }}>
             <p style={{ color: "#667085", fontSize: "0.85rem", margin: 0 }}>
-              © {new Date().getFullYear()} Seedetector AI. Todos os direitos reservados.
+              © {new Date().getFullYear()} SeeDetector AI. Todos os direitos reservados.
             </p>
             <p style={{ color: "#667085", fontSize: "0.85rem", margin: 0 }}>
               Feito com 🌱 para o agronegócio brasileiro

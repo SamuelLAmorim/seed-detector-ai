@@ -1,4 +1,4 @@
-import api from './api';
+import api, { MAX_UPLOAD_BYTES, MAX_UPLOAD_MB } from './api';
 import {
   ArcElement, BarElement, CategoryScale, Chart as ChartJS,
   Legend, LinearScale, LineElement, PointElement, Title, Tooltip,
@@ -290,12 +290,26 @@ function App() {
   }, [fetchHistory, fetchProfile, token]);
 
   const handleFileChange = (e) => {
-    const sel = Array.from(e.target.files);
-    setFiles(sel);
-    setPreviewUrls(sel.map(f => URL.createObjectURL(f)));
-    if (sel.length) addToast(`${sel.length} imagem(ns) carregada(s)!`);
-  };
+    const selectedFiles = Array.from(e.target.files || []);
+    const validFiles = [];
+    let rejectedFiles = 0;
 
+    selectedFiles.forEach(file => {
+      if (!file.type.startsWith('image/') || file.size > MAX_UPLOAD_BYTES) {
+        rejectedFiles++;
+        return;
+      }
+      validFiles.push(file);
+    });
+
+    previewUrls.forEach(url => URL.revokeObjectURL(url));
+    setFiles(validFiles);
+    setPreviewUrls(validFiles.map(file => URL.createObjectURL(file)));
+
+    if (validFiles.length) addToast(`${validFiles.length} imagem(ns) pronta(s) para análise!`);
+    if (rejectedFiles) addToast(`${rejectedFiles} arquivo(s) ignorado(s). Use imagens de até ${MAX_UPLOAD_MB} MB.`, 'warning');
+    e.target.value = '';
+  };
   useEffect(() => () => previewUrls.forEach(u => URL.revokeObjectURL(u)), [previewUrls]);
 
   const handleLogin = async (e) => {
@@ -308,7 +322,7 @@ function App() {
       setToken(res.data.access_token);
       setCurrentPage('dashboard');
       setCredentials({ username: '', password: '', email: '' });
-      addToast('Login realizado com sucesso! ??');
+      addToast('Login realizado com sucesso!');
     } catch (err) {
       const message = err?.response?.data?.detail || 'Falha no login. Verifique usuario e senha.';
       addToast(message, 'error');
@@ -320,7 +334,7 @@ function App() {
     try {
       await api.post('/users/signup', credentials);
       setCredentials({ username: '', password: '', email: '' });
-      addToast('Conta criada! Faca seu login.');
+      addToast('Conta criada! Faça seu login.');
       setIsRegistering(false);
     } catch (err) {
       const message = err?.response?.data?.detail || 'Erro ao cadastrar. Revise os dados informados.';
@@ -329,7 +343,7 @@ function App() {
   };
 
   const handleAnalyzeAll = async () => {
-    if (!files.length) return addToast('Selecione imagens primeiro!', 'warning');
+    if (!files.length) return addToast(`Selecione imagens válidas de até ${MAX_UPLOAD_MB} MB primeiro!`, 'warning');
     setLoading(true);
     const newResults = [];
     let errors = 0;
@@ -355,7 +369,7 @@ function App() {
         errors++;
         newResults.push({
           name: file.name,
-          error: err?.response?.data?.detail || 'Erro na analise',
+          error: err?.response?.data?.detail || 'Erro na análise',
           inteiras: 0,
           quebradas: 0,
           predadas: 0,
@@ -365,7 +379,7 @@ function App() {
     setResults(newResults);
     setLoading(false);
     await fetchProfile(token);
-    errors === 0 ? addToast(`${newResults.length} analise(s) concluida(s)!`) : addToast(`Concluido com ${errors} erro(s).`, 'warning');
+    errors === 0 ? addToast(`${newResults.length} análise(s) concluída(s)!`) : addToast(`Concluído com ${errors} erro(s).`, 'warning');
   };
 
   const handleDelete = async (id) => {
@@ -375,12 +389,12 @@ function App() {
       await api.delete(`/analysis/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       setResults(prev => prev.filter(r => r.id !== id));
       await fetchProfile(token);
-      addToast('Analise removida!');
+      addToast('Análise removida!');
     } catch (err) {
       if (err?.response?.status === 401) {
         handleUnauthorized();
       } else {
-        addToast(err?.response?.data?.detail || 'Erro ao deletar analise.', 'error');
+        addToast(err?.response?.data?.detail || 'Erro ao deletar análise.', 'error');
       }
     } finally {
       setDeletingId(null);
@@ -437,7 +451,7 @@ function App() {
         <div className="st-login-card">
           <button onClick={() => setCurrentPage('home')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--st-text-muted)', fontWeight: 600, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '24px', padding: 0 }}>← Voltar</button>
           <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>🌱</div>
-          <h1>Seed Detector AI</h1>
+          <h1>SeeDetector AI</h1>
           <p>{isRegistering ? 'Crie sua conta' : 'Acesse o painel de análise'}</p>
           <form onSubmit={isRegistering ? handleRegister : handleLogin}>
             <input type="text" placeholder="Usuário" required onChange={e => setCredentials({ ...credentials, username: e.target.value })} />
@@ -463,7 +477,7 @@ function App() {
         <aside className="st-sidebar">
           <div className="st-sidebar-header">
             <div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--st-text)', letterSpacing: '-0.5px' }}>🌱 Seed AI</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--st-text)', letterSpacing: '-0.5px' }}>🌱 SeeDetector AI</div>
               <div style={{ fontSize: '11px', color: 'var(--st-text-muted)', fontWeight: 600, marginTop: '2px' }}>Análise inteligente de sementes</div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -492,7 +506,8 @@ function App() {
 
           <div className="st-sidebar-item">
             <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--st-text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>📁 Carregar Imagens</label>
-            <input type="file" multiple onChange={handleFileChange} style={{ marginTop: '8px' }} />
+            <input type="file" accept="image/*" multiple onChange={handleFileChange} style={{ marginTop: '8px' }} />
+            <p style={{ fontSize: '0.75rem', color: 'var(--st-text-muted)', margin: '6px 0 0' }}>JPEG/PNG/WebP até {MAX_UPLOAD_MB} MB por imagem.</p>
             {previewUrls.length > 0 && (
               <div style={{ marginTop: '10px' }}>
                 <img src={previewUrls[0]} className="st-upload-preview" alt="Preview" />

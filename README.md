@@ -1,4 +1,4 @@
-﻿# Seed Detector AI
+# SeeDetector AI
 ![GitHub repo size](https://img.shields.io/github/repo-size/SamuelLAmorim/PrecisionCert-Centelha?style=for-the-badge)
 ![GitHub language count](https://img.shields.io/github/languages/count/SamuelLAmorim/PrecisionCert-Centelha?style=for-the-badge)
 ![GitHub last commit](https://img.shields.io/github/last-commit/SamuelLAmorim/PrecisionCert-Centelha?style=for-the-badge)
@@ -111,6 +111,7 @@ Principais variaveis:
 - `MODEL_PATH`
 - `ALLOW_MODEL_FALLBACK`
 - `VITE_API_BASE_URL`
+- `VITE_MAX_UPLOAD_BYTES`
 
 ## Como rodar com Docker
 
@@ -142,11 +143,13 @@ Para Azure App Service, Container Apps ou pipelines no Azure DevOps, configure p
 - `SECRET_KEY`
 - `ALGORITHM`
 - `ACCESS_TOKEN_EXPIRE_MINUTES`
+- `MAX_UPLOAD_BYTES`
 - `CORS_ORIGINS`
 - `MODEL_PATH`
 - `ALLOW_MODEL_FALLBACK`
 - `MODEL_FALLBACK_NAME`
 - `VITE_API_BASE_URL`
+- `VITE_MAX_UPLOAD_BYTES`
 - `API_PORT`
 - `FRONTEND_PORT`
 

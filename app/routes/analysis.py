@@ -10,6 +10,7 @@ from app.auth import oauth2_scheme
 from app.config import ALGORITHM, MAX_UPLOAD_BYTES, SECRET_KEY, STORAGE_DIR
 from app.database import get_session
 from app.detector import SeedDetector
+from app.upload_validation import UploadValidationError, validate_image_upload
 from app.models import (
     AnalysisUploadResponse,
     DeleteResponse,
@@ -52,19 +53,14 @@ async def upload_image(
     db: Session = Depends(get_session),
     user: User = Depends(get_current_user),
 ):
-    if not file.content_type or not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="Envie apenas arquivos de imagem")
-
     safe_name = Path(file.filename or "imagem.jpg").name
     file_path = Path(STORAGE_DIR) / f"{uuid4().hex}_{safe_name}"
     image_bytes = await file.read()
 
-    if not image_bytes:
-        raise HTTPException(status_code=400, detail="Arquivo vazio")
-
-    if len(image_bytes) > MAX_UPLOAD_BYTES:
-        max_mb = MAX_UPLOAD_BYTES / (1024 * 1024)
-        raise HTTPException(status_code=413, detail=f"Imagem muito grande. Limite: {max_mb:.1f} MB")
+    try:
+        validate_image_upload(file.content_type, image_bytes, MAX_UPLOAD_BYTES)
+    except UploadValidationError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.detail) from exc
 
     file_path.write_bytes(image_bytes)
 

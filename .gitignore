@@ -26,3 +26,7 @@ build/
 
 # Docker logs
 *.log
+
+
+datasets/
+runs/
