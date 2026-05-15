@@ -1,4 +1,5 @@
-﻿from pathlib import Path
+import logging
+from pathlib import Path
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
@@ -6,7 +7,7 @@ from jose import JWTError, jwt
 from sqlmodel import Session, select
 
 from app.auth import oauth2_scheme
-from app.config import ALGORITHM, SECRET_KEY, STORAGE_DIR
+from app.config import ALGORITHM, MAX_UPLOAD_BYTES, SECRET_KEY, STORAGE_DIR
 from app.database import get_session
 from app.detector import SeedDetector
 from app.models import (
@@ -17,6 +18,8 @@ from app.models import (
     ProfileResponse,
     User,
 )
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/analysis", tags=["Analise"])
 detector = SeedDetector()
@@ -59,6 +62,10 @@ async def upload_image(
     if not image_bytes:
         raise HTTPException(status_code=400, detail="Arquivo vazio")
 
+    if len(image_bytes) > MAX_UPLOAD_BYTES:
+        max_mb = MAX_UPLOAD_BYTES / (1024 * 1024)
+        raise HTTPException(status_code=413, detail=f"Imagem muito grande. Limite: {max_mb:.1f} MB")
+
     file_path.write_bytes(image_bytes)
 
     try:
@@ -67,6 +74,7 @@ async def upload_image(
         file_path.unlink(missing_ok=True)
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception as exc:
+        logger.exception("Falha ao processar imagem enviada para analise")
         file_path.unlink(missing_ok=True)
         raise HTTPException(status_code=500, detail="Falha ao processar a imagem") from exc
 

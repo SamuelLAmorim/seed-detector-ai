@@ -3,7 +3,7 @@ import {
   ArcElement, BarElement, CategoryScale, Chart as ChartJS,
   Legend, LinearScale, LineElement, PointElement, Title, Tooltip,
 } from 'chart.js';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Bar, Line, Pie } from 'react-chartjs-2';
 import './App.css';
 import Home from './components/Home';
@@ -128,7 +128,7 @@ function Gauge({ value, dark }) {
 }
 
 // ── PERFIL ───────────────────────────────────────────────
-function ProfilePage({ profile, onClose }) {
+function ProfilePage({ profile }) {
   if (!profile) return <EmptyState />;
   const badge = getQualityBadge(profile.aproveitamento_geral);
   const statCards = [
@@ -243,28 +243,28 @@ function App() {
     localStorage.removeItem('seedToken');
   }, [token]);
 
-  const addToast = (message, type = 'success') => {
+  const addToast = useCallback((message, type = 'success') => {
     const id = Date.now();
     setToasts(prev => [...prev, { id, message, type }]);
     setTimeout(() => setToasts(prev => prev.filter(t => t.id !== id)), 4000);
-  };
+  }, []);
   const removeToast = (id) => setToasts(prev => prev.filter(t => t.id !== id));
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setToken(null);
     setCurrentPage('home');
     setProfile(null);
     setResults([]);
     setFiles([]);
     setPreviewUrls([]);
-  };
+  }, []);
 
-  const handleUnauthorized = () => {
+  const handleUnauthorized = useCallback(() => {
     logout();
     addToast('Sua sessao expirou. Entre novamente.', 'warning');
-  };
+  }, [addToast, logout]);
 
-  const fetchHistory = async (tkn) => {
+  const fetchHistory = useCallback(async (tkn) => {
     try {
       const res = await api.get('/analysis/history', { headers: { Authorization: `Bearer ${tkn}` } });
       setResults(res.data.map(item => ({
@@ -274,20 +274,20 @@ function App() {
         timestamp: item.created_at || null,
       })));
     } catch (err) { if (err?.response?.status === 401) handleUnauthorized(); console.error(err); }
-  };
+  }, [handleUnauthorized]);
 
-  const fetchProfile = async (tkn) => {
+  const fetchProfile = useCallback(async (tkn) => {
     try {
       const res = await api.get('/analysis/profile', { headers: { Authorization: `Bearer ${tkn}` } });
       setProfile(res.data);
     } catch (err) { if (err?.response?.status === 401) handleUnauthorized(); console.error(err); }
-  };
+  }, [handleUnauthorized]);
 
   useEffect(() => {
     if (!token) return;
     fetchHistory(token);
     fetchProfile(token);
-  }, [token]);
+  }, [fetchHistory, fetchProfile, token]);
 
   const handleFileChange = (e) => {
     const sel = Array.from(e.target.files);

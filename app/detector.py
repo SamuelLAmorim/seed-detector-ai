@@ -1,4 +1,5 @@
-﻿import base64
+import base64
+import logging
 from pathlib import Path
 
 import cv2
@@ -6,6 +7,36 @@ import numpy as np
 from ultralytics import YOLO
 
 from app.config import ALLOW_MODEL_FALLBACK, MODEL_FALLBACK_NAME, MODEL_PATH
+
+logger = logging.getLogger(__name__)
+
+CLASS_ALIASES = {
+    "inteira": "inteira",
+    "inteiro": "inteira",
+    "seed_inteira": "inteira",
+    "semente_inteira": "inteira",
+    "milho_inteira": "inteira",
+    "milho_inteiro": "inteira",
+    "quebrada": "quebrada",
+    "quebrado": "quebrada",
+    "seed_quebrada": "quebrada",
+    "semente_quebrada": "quebrada",
+    "milho_quebrada": "quebrada",
+    "milho_quebrado": "quebrada",
+    "predada": "predada",
+    "predado": "predada",
+    "pedrada": "predada",
+    "bug": "predada",
+    "seed_predada": "predada",
+    "semente_predada": "predada",
+    "milho_predada": "predada",
+    "milho_predado": "predada",
+}
+
+
+def normalize_class_name(class_name: str) -> str | None:
+    normalized = class_name.strip().lower().replace(" ", "_").replace("-", "_")
+    return CLASS_ALIASES.get(normalized)
 
 
 class SeedDetector:
@@ -15,12 +46,15 @@ class SeedDetector:
         if resolved_model.exists():
             self.model = YOLO(str(resolved_model))
             self.model_name = resolved_model.name
-            print(f"--- Modelo carregado com sucesso: {resolved_model} ---")
-            print(f"--- Classes detectadas: {self.model.names} ---")
+            logger.info("Modelo carregado com sucesso: %s", resolved_model)
+            logger.info("Classes detectadas: %s", self.model.names)
             return
 
         if ALLOW_MODEL_FALLBACK:
-            print(f"--- AVISO: modelo principal nao encontrado. Usando fallback {MODEL_FALLBACK_NAME}. ---")
+            logger.warning(
+                "Modelo principal nao encontrado. Usando fallback %s.",
+                MODEL_FALLBACK_NAME,
+            )
             self.model = YOLO(MODEL_FALLBACK_NAME)
             self.model_name = MODEL_FALLBACK_NAME
             return
@@ -41,16 +75,13 @@ class SeedDetector:
 
         for box in results.boxes:
             cls_id = int(box.cls[0].item())
-            class_name = str(self.model.names[cls_id]).lower()
+            class_name = str(self.model.names[cls_id])
+            category = normalize_class_name(class_name)
 
-            if "inteira" in class_name:
-                counts["inteira"] += 1
-            elif "quebrada" in class_name:
-                counts["quebrada"] += 1
-            elif "predada" in class_name or "pedrada" in class_name or "bug" in class_name or "pred" in class_name:
-                counts["predada"] += 1
+            if category:
+                counts[category] += 1
             else:
-                print(f"--- AVISO: classe desconhecida: '{class_name}' ---")
+                logger.warning("Classe desconhecida ignorada pelo detector: %s", class_name)
 
         annotated_img = results.plot()
         success, buffer = cv2.imencode(".jpg", annotated_img, [cv2.IMWRITE_JPEG_QUALITY, 85])
